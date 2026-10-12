@@ -1,3 +1,8 @@
+/**
+ * @file main.c
+ * @brief Main application entry point for the Autonomous Vehicle (AV) control unit.
+ */
+
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -6,6 +11,9 @@
 
 #define VL_SENSOR_COUNT 4
 
+/**
+ * @brief Structure representing telemetry data sent from ESP32 to the controller.
+ */
 typedef struct __attribute__((packed)) {
     uint16_t vl_data[VL_SENSOR_COUNT];
     int16_t  deltaYaw;
@@ -14,14 +22,21 @@ typedef struct __attribute__((packed)) {
     uint8_t  button;
 } robot_tx_data_t;
 
+/**
+ * @brief Structure representing command data received from the controller.
+ */
 typedef struct __attribute__((packed)) {
     int16_t motor;
     int16_t servo;
     uint8_t neopixel;
 } robot_rx_data_t;
 
+/** @brief FreeRTOS queue handle for UART event management. */
 static QueueHandle_t my_uart_queue;
 
+/**
+ * @brief Callback executed upon receiving a valid and verified control frame.
+ */
 void on_robot_data_received(const void *payload, size_t payload_len) {
     if (payload_len == sizeof(robot_rx_data_t)) {
         const robot_rx_data_t *rx_data = (const robot_rx_data_t *)payload;
@@ -32,6 +47,9 @@ void on_robot_data_received(const void *payload, size_t payload_len) {
     }
 }
 
+/**
+ * @brief Dedicated background task to process incoming UART queue events.
+ */
 void uart_event_task(void *pvParameters) {
     uart_event_t event;
     while(1) {
@@ -41,6 +59,9 @@ void uart_event_task(void *pvParameters) {
     }
 }
 
+/**
+ * @brief Main application initialization and execution loop.
+ */
 void app_main(void) {
     ht_uart_config_t uart_cfg = {
         .uart_num = UART_NUM_1,
