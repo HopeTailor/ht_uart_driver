@@ -1,1 +1,1 @@
-idf_component_register(SRCS "src/ht_uart.c" INCLUDE_DIRS "include" REQUIRES "driver" "freertos")
+idf_component_register(SRCS "src/ht_uart.c" INCLUDE_DIRS "include" REQUIRES esp_driver_uart freertos)
